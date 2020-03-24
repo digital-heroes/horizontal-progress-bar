@@ -5,10 +5,39 @@
  * @format
  * @flow
  */
-import React from 'react';
-import {Animated, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Animated,
+  Easing,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 const App: () => React$Node = () => {
+  const [offsetX] = useState(new Animated.Value(-400));
+  const translate = Animated.timing(offsetX, {
+    toValue: 0,
+    duration: 1000,
+    easing: Easing.inOut(Easing.linear),
+    useNativeDriver: true,
+  });
+  const reset = Animated.timing(offsetX, {
+    toValue: -430,
+    duration: 0,
+    useNativeDriver: true,
+  });
+  const animation = Animated.sequence([translate, reset]);
+  useEffect(() => {
+    Animated.loop(animation).start();
+
+    // Substitua esse setTimeout por uma chamada http ou qualquer outra chamada de serviço.
+    setTimeout(() => {
+      console.log('Chamar serviço');
+    }, 4000);
+  }, [animation]);
+  const transform = {transform: [{translateX: offsetX}]};
   return (
     <SafeAreaView>
       <View style={styles.headerContentContainer}>
@@ -17,10 +46,10 @@ const App: () => React$Node = () => {
         </Text>
       </View>
       <Animated.View style={styles.syncProgressBarContainer}>
-        <Animated.View style={styles.syncProgressBar} />
-        <Animated.View style={styles.syncProgressBar} />
-        <Animated.View style={styles.syncProgressBar} />
-        <Animated.View style={styles.syncProgressBar} />
+        <Animated.View style={[transform, styles.syncProgressBar]} />
+        <Animated.View style={[transform, styles.syncProgressBar]} />
+        <Animated.View style={[transform, styles.syncProgressBar]} />
+        <Animated.View style={[transform, styles.syncProgressBar]} />
       </Animated.View>
       <View style={styles.syncContentContainer}>
         <Text style={styles.title3}>Não feche ou saia do aplicativo.</Text>
@@ -35,8 +64,8 @@ const App: () => React$Node = () => {
 const styles = StyleSheet.create({
   headerContentContainer: {
     paddingHorizontal: 25,
-    paddingTop: 40,
-    paddingBottom: 20,
+    paddingTop: 80,
+    paddingBottom: 40,
   },
   syncContentContainer: {
     paddingHorizontal: 25,
